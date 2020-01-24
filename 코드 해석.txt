@@ -1,0 +1,41 @@
+def score_info():
+    aa_list = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y', 'X', '_']
+    aa_score_info = {}
+    for aa in aa_list:
+        for aa2 in aa_list:
+            if aa == aa2:
+                aa_score_info[(aa, aa2)] = 1.0
+                aa_score_info[(aa2, aa)] = 1.0
+            else:
+                aa_score_info[(aa, aa2)] = 0.0
+                aa_score_info[(aa2, aa)] = 0.0
+    return aa_score_info
+
+def one_hot_encoding(seq, aa_score_info):
+    data = np.zeros((1000, 21), dtype=np.float32)
+    aa_list = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y', 'X']
+    for i, aa in enumerate(seq):
+        for j, aa2 in enumerate(aa_list):
+            data[i, j] = aa_score_info[aa, aa2]
+    return data
+
+#score_info -> aa_list의 각 문자가 서로 만나는곳만 1.0이 된다
+즉
+   A C D E F G
+A 1 0 0 0 0 0
+C 0 1 0 0 0 0
+D 0 0 1 0 0 0
+E 0 0 0 1 0 0
+F 0 0 0 0 1 0
+G 0 0 0 0 0 1
+
+#one_hot_encoding -> seq와 위에 score_info에서 만든 데이터를 가지고
+인덱스번호에 해당하는 특성문자와 시퀀스문자를 찍어서 데이터에 넣어준다
+ex) seq = ACDEFG
+data[0,0] = aa_score_info[A,A] = 1
+data[0,1] = aa_score_info[A,C] = 0
+data[0,2] = aa_score_info[A,D] = 0
+data[0,3] = aa_score_info[A,E] = 0
+data[1,1] = aa_score_info[C,C] = 1
+-> aa_score_info에 있는 1.0 값들중 서로 일치하는 것을 data 배열에 그대로 넣어줌
+
